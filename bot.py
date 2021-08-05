@@ -33,7 +33,7 @@ async def ping(ctx):
     await msg.edit(content = edit_to)
 
 # List command
-# Outputs all the supported leagues
+# Outputs all the supported leagues, organized by region in embed menu
 @bot.command(help = 'Returns supported leagues')
 async def list(ctx):
     response = requests.get("https://esports-api.lolesports.com/persisted/gw/getLeagues?hl=en-US", headers=headers)
@@ -43,9 +43,20 @@ async def list(ctx):
     leagues = response_info["data"]["leagues"]
     
     result = []
+    regions = {}
     for league in leagues:
-        result.append(league["name"] + "\n")
-    await ctx.channel.send("".join(result))
+        region = league["region"]
+        league_name = league["name"]
+
+        if region not in regions:
+            regions[region] = []
+        
+        regions[region].append(league_name + "\n")
+        # result.append(league_name + "\n")
+
+    print(regions)
+    # await ctx.channel.send("".join(result))
+    await ctx.channel.send("Finished, check terminal")
 
 """ # Get schedule command
 # Outputs the weekly schedule for the specified league
