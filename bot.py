@@ -71,14 +71,4 @@ async def list(ctx):
 
     await ctx.channel.send(embed=embed)
 
-""" # Get schedule command
-# Outputs the weekly schedule for the specified league
-# arg = league abbreviation (LCS, LEC, etc)
-@bot.command(help = 'Returns schedule of specified league')
-async def sched(ctx, league):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.channel.send("Please specify which league you would like to see the schedule of (``-list`` for a list of leagues)")
-    else:
-        await ctx.channel.send("Placeholder, will be pulling from lolesports API") """
-
 bot.run(TOKEN)
