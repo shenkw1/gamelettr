@@ -10,13 +10,13 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 API_KEY = os.getenv('API_KEY')
 
-headers = {
+HEADERS = {
     "x-api-key" : API_KEY
 }
 
 bot = commands.Bot(command_prefix = "-")
 
-ROOT_URL = "https://esports-api.lolesports.com/persisted/gw"
+ROOT_URL = "https://esports-api.lolesports.com/persisted/gw/"
 
 # Connection
 @bot.event
@@ -36,9 +36,13 @@ async def ping(ctx):
 
 # List command
 # Outputs all the supported leagues, organized by region in embed menu
-@bot.command(help='Returns supported leagues')
+@bot.command(help="Returns supported leagues")
 async def list(ctx):
-    response = requests.get(ROOT_URL + "getLeagues?hl=en-US", headers=headers)
+    response = requests.get(ROOT_URL + "getLeagues?hl=en-US", headers=HEADERS)
+
+    if response.status_code != 200:
+        await ctx.channel.send("Something went wrong, please try again later...")
+        return
 
     response_info = response.json()
     leagues = response_info["data"]["leagues"]
