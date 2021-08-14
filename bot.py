@@ -18,6 +18,28 @@ bot = commands.Bot(command_prefix = "-")
 
 ROOT_URL = "https://esports-api.lolesports.com/persisted/gw/"
 
+# Getting leagues from API data
+response = requests.get(ROOT_URL + "getLeagues?hl=en-US", headers=HEADERS)
+response_info = response.json()
+leagues = response_info["data"]["leagues"]
+    
+# Organizing data and adding it to region-league hashmap, and adding IDs to list
+regions = {}
+ids = []
+imgs = []
+for league in leagues:
+    region = league["region"]
+    league_name = league["name"]
+    league_id = league["id"]
+    league_image = league["image"]
+
+    if region not in regions:
+        regions[region] = []
+            
+    regions[region].append(league_name)
+    ids.append(league_id)
+    imgs.append(league_image)
+
 # Connection
 @bot.event
 async def on_ready():
@@ -29,7 +51,7 @@ async def ping(ctx):
     msg = await ctx.channel.send("Pong")
     
     now = datetime.now().timestamp()
-    ping = round((now - msg.created_at.timestamp() + 14400) * 1000) # math to fix difference from UTC
+    ping = round(bot.latency * 1000)
     edit_to = f"Pong, {ping} ms"
 
     await msg.edit(content=edit_to)
@@ -37,27 +59,7 @@ async def ping(ctx):
 # List command
 # Outputs all the supported leagues, organized by region in embed menu
 @bot.command(help="Returns supported leagues")
-async def list(ctx):
-    response = requests.get(ROOT_URL + "getLeagues?hl=en-US", headers=HEADERS)
-
-    if response.status_code != 200:
-        await ctx.channel.send("Something went wrong, please try again later...")
-        return
-
-    response_info = response.json()
-    leagues = response_info["data"]["leagues"]
-    
-    # Organizing data and adding it to hashmap
-    regions = {}
-    for league in leagues:
-        region = league["region"]
-        league_name = league["name"]
-
-        if region not in regions:
-            regions[region] = []
-        
-        regions[region].append(league_name)
-    
+async def list(ctx):    
     # Creating embed
     embed = discord.Embed(title="Supported leagues", color=discord.Color.blurple())
     embed.set_thumbnail(url="https://pbs.twimg.com/profile_images/1407732613171793925/pQZWynfn_400x400.jpg")
