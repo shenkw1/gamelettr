@@ -2,6 +2,7 @@ import os
 import discord
 import requests
 import json
+from time import time, sleep
 from dotenv import load_dotenv
 from discord.ext import commands
 from datetime import datetime
@@ -18,7 +19,7 @@ bot = commands.Bot(command_prefix = "-")
 
 ROOT_URL = "https://esports-api.lolesports.com/persisted/gw/"
 
-# Getting leagues from API data
+# Getting leagues from API
 response = requests.get(ROOT_URL + "getLeagues?hl=en-US", headers=HEADERS)
 response_info = response.json()
 leagues = response_info["data"]["leagues"]
@@ -77,5 +78,30 @@ async def list(ctx):
         embed.add_field(name = "\u200b", value= "\u200b")
 
     await ctx.channel.send(embed=embed)
+
+# Get schedule command
+# Retrieves the schedule in embed menu, only needs to update once every ~15 minutes or so
+@bot.command(help="Returns the schedule of the specified league")
+async def sched(ctx, league_number):
+    # Getting specified ID from array
+    n = 0
+    if league_number <= ids.len:
+        if league_number - 1 == ids[n]:
+            want_id = ids[n]
+        else:    
+            n += 1
+    else:
+        await ctx.channel.send("Please enter a number for a supported league (``-list`` to see the supported leagues)")
+        return
+    
+    # Making request for schedule from API
+
+    await ctx.channel.send("yay")
+
+# Error checking for schedule command
+@sched.error
+async def sched_error(ctx, error):
+    if isinstance(error, commands.errors.MissingRequiredArgument):
+        await ctx.channel.send("Please include the specific league's number (``-list`` to see the supported leagues)")
 
 bot.run(TOKEN)
