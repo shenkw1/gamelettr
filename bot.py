@@ -85,7 +85,7 @@ async def list(ctx):
 async def sched(ctx, league_number):
     # Getting specified ID from array
     n = 0
-    if league_number <= ids.len:
+    if league_number <= len(ids):
         if league_number - 1 == ids[n]:
             want_id = ids[n]
         else:    
@@ -95,6 +95,14 @@ async def sched(ctx, league_number):
         return
     
     # Making request for schedule from API
+    query_string = {
+        "hl" : "en-US",
+        "leagueId" : want_id
+    }
+
+    response = requests.get(ROOT_URL + "getSchedule", headers=HEADERS, params=query_string)
+    sched_info = response.json()
+    print(sched_info)
 
     await ctx.channel.send("yay")
 
